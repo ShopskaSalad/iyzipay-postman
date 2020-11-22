@@ -1,0 +1,3543 @@
+{
+	"info": {
+		"_postman_id": "bff98f30-f580-4735-8461-a60914497c4c",
+		"name": "Subscription-Api copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "subscription-api",
+			"item": [
+				{
+					"name": "card-update",
+					"item": [
+						{
+							"name": "checkoutform",
+							"item": [
+								{
+									"name": "init",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "5940cf9b-2169-44d4-8f92-37b186fadd20",
+												"exec": [
+													"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+													"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+													" ",
+													"//generate authorization string",
+													"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+													"  var startIndex = requestUrl.indexOf(\"/v2\");",
+													"  var endIndex = requestUrl.indexOf(\"?\");",
+													"  var uri_path;",
+													"  if (endIndex === -1){",
+													"    uri_path = requestUrl.substring(startIndex);",
+													"  } else {",
+													"    uri_path = requestUrl.substring(startIndex, endIndex);",
+													"  }",
+													"  ",
+													"  var payload;",
+													"  if (_.isEmpty(requestData)){",
+													"    payload = uri_path;",
+													"  } else {",
+													"    payload = uri_path + requestData; ",
+													"  }",
+													" ",
+													"  var dataToEncrypt = randomKey + payload;",
+													"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+													"  ",
+													"  var authorizationString = \"apiKey:\" + apiKey",
+													"            +\"&randomKey:\" + randomKey",
+													"            +\"&signature:\" + encryptedData;",
+													"    ",
+													"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+													"  ",
+													"  console.log(\"apiKey\", apiKey);",
+													"  console.log(\"secretKey\", secretKey);",
+													"  console.log(\"requestUrl\", requestUrl);",
+													"  console.log(\"requestData\", requestData);",
+													"  console.log(\"randomKey\", randomKey);",
+													"  console.log(\"uri_path\", uri_path);",
+													"  console.log(\"payload\", payload);",
+													"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+													"  console.log(\"encryptedData\", encryptedData);",
+													"  console.log(\"authorizationString\", authorizationString);",
+													"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+													"  ",
+													"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+													"}",
+													" ",
+													"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+													"postman.setGlobalVariable(\"authorization\", authorization);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "{{authorization}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"callbackUrl\": \"https://www.merchant.com/callback\",\n\t\"customerReferenceCode\": \"5342f287-0d72-40fb-a219-093ba2b33b97\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/subscription/card-update/checkoutform/initialize",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"subscription",
+												"card-update",
+												"checkoutform",
+												"initialize"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "complete",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "8c61747d-c779-4091-8557-f430124d29ad",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "X-IYZI-TOKEN",
+												"type": "text",
+												"value": "b67ec28a-cb6f-486c-89c4-42520a4fc963"
+											},
+											{
+												"key": "X-Izy-Orgnl-IP",
+												"type": "text",
+												"value": "127.0.0.1"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"paidPrice\": 1,\n\t\"paymentChannel\": \"WEB\",\n\t\"paymentCard\": {\n\t\t\"cardHolderName\": \"John Doe\",\n\t\t\"cardNumber\": \"1111111111111111\",\n\t\t\"expireYear\": \"24\",\n\t\t\"expireMonth\": \"12\",\n\t\t\"cvc\": \"999\",\n\t\t\"registerCard\": 1\n\t}\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/subscription/card-update/checkoutform/complete",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"subscription",
+												"card-update",
+												"checkoutform",
+												"complete"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "customer",
+					"item": [
+						{
+							"name": "delete customer via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "039384f9-ee65-4ced-91d4-ce61dc003940",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"erhan\",\n\t\"surname\": \"mut\",\n\t\"email\": \"erh@mail3.com\",\n\t\"gsmNumber\": \"+905385499160\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/customers/a53ea913-c8ab-4d3e-8cb0-427cf6a9e9a9",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers",
+										"a53ea913-c8ab-4d3e-8cb0-427cf6a9e9a9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "list customers via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "18c43971-d053-4234-ae9f-17cbe53548c0",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/customers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update customer",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8cc1f03e-6097-430b-9af8-451aa468a7bb",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic3Vic2NyaXB0aW9uIiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsInN1YnNjcmlwdGlvbl9lZGl0IiwiYXBwbGljYXRpb24iLCJmdW5kIiwidmFsaWRhdGlvbl9lcnJvcl9lZGl0IiwicmVmdW5kc19lZGl0IiwiZGFzaGJvYXJkX2VkaXQiLCJpbnZvaWNlIiwiYXNhbl9wYXJkYWtodCIsInNldHRsZW1lbnRfdXBkYXRlZCIsInVzZXJNYW5hZ2VtZW50X2VkaXQiXSwiY2xpZW50X2lkIjoibWVtYmVyQXBpIiwicGhvbmVOdW1iZXIiOiIrOTA1Mzg1NDk5MTYwIiwibWVyY2hhbnRJZCI6MzQ1MDM2LCJzY29wZSI6WyJtZW1iZXJBcGkiXSwibWFzdGVyVXNlciI6dHJ1ZSwibWVtYmVyVHlwZSI6IlBFUlNPTkFMIiwiZXhwIjoxNTU2MTk5MzcyLCJ0b2tlblR5cGUiOiJtZW1iZXJVc2VyIiwianRpIjoiOWE0ZWE5MzEtNTJkYi00M2Q1LWFjYmQtZTg5MzBlODc2ODk1IiwibWVtYmVySWQiOjUxNDUzfQ.HwGir2y9va8jl_mGUvCP3GPCyBk3ScOOyrSdnbuRy5Q"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"erhan\",\n\t\"surname\": \"mut\",\n\t\"email\": \"erhan@mail.com\",\n\t\"gsmNumber\": \"+905385499160\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/customers/3b3dde97-3296-4be6-b44b-6924c050144b",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers",
+										"3b3dde97-3296-4be6-b44b-6924c050144b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "list customers",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "551d5d8e-4bb2-4ce7-beed-f56b99bf25c6",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic3Vic2NyaXB0aW9uIiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsInN1YnNjcmlwdGlvbl9lZGl0IiwiYXBwbGljYXRpb24iLCJmdW5kIiwidmFsaWRhdGlvbl9lcnJvcl9lZGl0IiwicmVmdW5kc19lZGl0IiwiZGFzaGJvYXJkX2VkaXQiLCJpbnZvaWNlIiwiYXNhbl9wYXJkYWtodCIsInNldHRsZW1lbnRfdXBkYXRlZCIsInVzZXJNYW5hZ2VtZW50X2VkaXQiXSwiY2xpZW50X2lkIjoibWVtYmVyQXBpIiwicGhvbmVOdW1iZXIiOiIrOTA1Mzg1NDk5MTYwIiwibWVyY2hhbnRJZCI6MzQ1MDM2LCJzY29wZSI6WyJtZW1iZXJBcGkiXSwibWFzdGVyVXNlciI6dHJ1ZSwibWVtYmVyVHlwZSI6IlBFUlNPTkFMIiwiZXhwIjoxNTU2MTk5MzcyLCJ0b2tlblR5cGUiOiJtZW1iZXJVc2VyIiwianRpIjoiOWE0ZWE5MzEtNTJkYi00M2Q1LWFjYmQtZTg5MzBlODc2ODk1IiwibWVtYmVySWQiOjUxNDUzfQ.HwGir2y9va8jl_mGUvCP3GPCyBk3ScOOyrSdnbuRy5Q"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/customers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create customer",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "5054ce48-2e2f-4cae-9556-e1375309bd82",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"dummy\",\n\t\"surname\": \"dude\",\n\t\"email\": \"dummyDudeTest@mail.com\",\n\t\"gsmNumber\": \"+905385499160\",\n\t\"identityNumber\": \"111111\",\n\t\"billingAddress\": {\n\t\t\t\"address\": \"address1\",\n\t\t\t\"zipCode\": \"zipCode1\",\n\t\t\t\"contactName\": \"contactName1\",\n\t\t\t\"city\": \"city1\",\n\t\t\t\"country\": \"country1\"\n\t},\n\t\"shippingAddress\": {\n\t\t\"address\": \"address\",\n\t\t\"zipCode\": \"zipCode\",\n\t\t\"contactName\": \"contactName\",\n\t\t\"city\": \"city\",\n\t\t\"country\": \"country\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "https://sandbox-api.iyzipay.com/v2/subscription/customers",
+									"protocol": "https",
+									"host": [
+										"sandbox-api",
+										"iyzipay",
+										"com"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retrieve customer via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "34332f0a-d2d6-48e0-85ce-718b896cb0e0",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/customers/5342f287-0d72-40fb-a219-093ba2b33b97",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers",
+										"5342f287-0d72-40fb-a219-093ba2b33b97"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete customer",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "20aa7d51-355b-4ae8-823f-0ca3780151cf",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsImFwcGxpY2F0aW9uIiwiZnVuZCIsInZhbGlkYXRpb25fZXJyb3JfZWRpdCIsInJlZnVuZHNfZWRpdCIsImRhc2hib2FyZF9lZGl0IiwiaW52b2ljZSIsImFzYW5fcGFyZGFraHQiLCJzZXR0bGVtZW50X3VwZGF0ZWQiLCJ1c2VyTWFuYWdlbWVudF9lZGl0Il0sImNsaWVudF9pZCI6Im1lbWJlckFwaSIsInBob25lTnVtYmVyIjoiKzkwNTM4NTQ5OTE2MCIsIm1lcmNoYW50SWQiOjM0NTAzNiwic2NvcGUiOlsibWVtYmVyQXBpIl0sIm1hc3RlclVzZXIiOnRydWUsIm1lbWJlclR5cGUiOiJQRVJTT05BTCIsImV4cCI6MTU1NTY4ODg0NCwidG9rZW5UeXBlIjoibWVtYmVyVXNlciIsImp0aSI6IjA0ZjMzZjYwLWJjNmItNGY4NC1iYTcxLWEyNmQ0YzdmZmEwMCIsIm1lbWJlcklkIjo1MTQ1M30.jCF2fYtDlJrMZXB4ntGhzoguubjbDWE2hjgCe4E52nc"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/subscription/customers/3b3dde97-3296-4be6-b44b-6924c050144b",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"subscription",
+										"customers",
+										"3b3dde97-3296-4be6-b44b-6924c050144b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update customer via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "c67233e0-11a0-4550-8bdc-c4eb4b9feec9",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"identityNumber\": \"2322221\",\n\t\"billingAddress\": {\n\t\t\t\"address\": \"address1\",\n\t\t\t\"zipCode\": \"zipCode1\",\n\t\t\t\"contactName\": \"contactName1\",\n\t\t\t\"city\": \"city1\",\n\t\t\t\"country\": \"country1\"\n\t},\n\t\"shippingAddress\": {\n\t\t\"address\": \"address\",\n\t\t\"zipCode\": \"zipCode\",\n\t\t\"contactName\": \"contactName\",\n\t\t\"city\": \"city\",\n\t\t\"country\": \"country\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/customers/8a7d38ad-7f5e-40b3-a861-b007915c152a",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers",
+										"8a7d38ad-7f5e-40b3-a861-b007915c152a"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retrieve customer",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a7d529b1-1fdd-48e9-b4d2-09a6d5841bed",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsImFwcGxpY2F0aW9uIiwiZnVuZCIsInZhbGlkYXRpb25fZXJyb3JfZWRpdCIsInJlZnVuZHNfZWRpdCIsImRhc2hib2FyZF9lZGl0IiwiaW52b2ljZSIsImFzYW5fcGFyZGFraHQiLCJzZXR0bGVtZW50X3VwZGF0ZWQiLCJ1c2VyTWFuYWdlbWVudF9lZGl0Il0sImNsaWVudF9pZCI6Im1lbWJlckFwaSIsInBob25lTnVtYmVyIjoiKzkwNTM4NTQ5OTE2MCIsIm1lcmNoYW50SWQiOjM0NTAzNiwic2NvcGUiOlsibWVtYmVyQXBpIl0sIm1hc3RlclVzZXIiOnRydWUsIm1lbWJlclR5cGUiOiJQRVJTT05BTCIsImV4cCI6MTU1NTY4ODg0NCwidG9rZW5UeXBlIjoibWVtYmVyVXNlciIsImp0aSI6IjA0ZjMzZjYwLWJjNmItNGY4NC1iYTcxLWEyNmQ0YzdmZmEwMCIsIm1lbWJlcklkIjo1MTQ1M30.jCF2fYtDlJrMZXB4ntGhzoguubjbDWE2hjgCe4E52nc"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/subscription/customers/3b3dde97-3296-4be6-b44b-6924c050144b",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"subscription",
+										"customers",
+										"3b3dde97-3296-4be6-b44b-6924c050144b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create customer via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "371af160-6236-4885-8e7f-9dccc1de7923",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"erhan\",\n\t\"surname\": \"mut\",\n\t\"email\": \"test@mail.com\",\n\t\"gsmNumber\": \"+905385499160\",\n\t\"identityNumber\": \"111111\",\n\t\"billingAddress\": {\n\t\t\t\"address\": \"address1\",\n\t\t\t\"zipCode\": \"zipCode1\",\n\t\t\t\"contactName\": \"contactName1\",\n\t\t\t\"city\": \"city1\",\n\t\t\t\"country\": \"country1\"\n\t},\n\t\"shippingAddress\": {\n\t\t\"address\": \"address\",\n\t\t\"zipCode\": \"zipCode\",\n\t\t\"contactName\": \"contactName\",\n\t\t\"city\": \"city\",\n\t\t\"country\": \"country\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/customers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"customers"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "product",
+					"item": [
+						{
+							"name": "create product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a5df3edd-5442-4b62-8fb7-d7e504b9cbc4",
+										"exec": [
+											"var apiKey = pm.variables.get(\"apiKey\")",
+											"var secretKey = pm.variables.get(\"secretKey\")",
+											"",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											" ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData;",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											" ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"   ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											" ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											" ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authorization}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"dummy-product\",\n\t\"description\": \"testDesc\"\n}"
+								},
+								"url": {
+									"raw": "https://sandbox-api.iyzipay.com/v2/subscription/products",
+									"protocol": "https",
+									"host": [
+										"sandbox-api",
+										"iyzipay",
+										"com"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "list products",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9b623b50-6839-412c-a5e0-e7c398da2864",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic3Vic2NyaXB0aW9uIiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsInN1YnNjcmlwdGlvbl9lZGl0IiwiYXBwbGljYXRpb24iLCJmdW5kIiwidmFsaWRhdGlvbl9lcnJvcl9lZGl0IiwicmVmdW5kc19lZGl0IiwiZGFzaGJvYXJkX2VkaXQiLCJpbnZvaWNlIiwiYXNhbl9wYXJkYWtodCIsInNldHRsZW1lbnRfdXBkYXRlZCIsInVzZXJNYW5hZ2VtZW50X2VkaXQiXSwiY2xpZW50X2lkIjoibWVtYmVyQXBpIiwicGhvbmVOdW1iZXIiOiIrOTA1Mzg1NDk5MTYwIiwibWVyY2hhbnRJZCI6MzQ1MDM2LCJzY29wZSI6WyJtZW1iZXJBcGkiXSwibWFzdGVyVXNlciI6dHJ1ZSwibWVtYmVyVHlwZSI6IlBFUlNPTkFMIiwiZXhwIjoxNTU2MTk5MzcyLCJ0b2tlblR5cGUiOiJtZW1iZXJVc2VyIiwianRpIjoiOWE0ZWE5MzEtNTJkYi00M2Q1LWFjYmQtZTg5MzBlODc2ODk1IiwibWVtYmVySWQiOjUxNDUzfQ.HwGir2y9va8jl_mGUvCP3GPCyBk3ScOOyrSdnbuRy5Q"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/subscription/products",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"subscription",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retrieve product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7b0f7dea-b25f-4c54-b878-da12e8d01681",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsImFwcGxpY2F0aW9uIiwiZnVuZCIsInZhbGlkYXRpb25fZXJyb3JfZWRpdCIsInJlZnVuZHNfZWRpdCIsImRhc2hib2FyZF9lZGl0IiwiaW52b2ljZSIsImFzYW5fcGFyZGFraHQiLCJzZXR0bGVtZW50X3VwZGF0ZWQiLCJ1c2VyTWFuYWdlbWVudF9lZGl0Il0sImNsaWVudF9pZCI6Im1lbWJlckFwaSIsInBob25lTnVtYmVyIjoiKzkwNTM4NTQ5OTE2MCIsIm1lcmNoYW50SWQiOjM0NTAzNiwic2NvcGUiOlsibWVtYmVyQXBpIl0sIm1hc3RlclVzZXIiOnRydWUsIm1lbWJlclR5cGUiOiJQRVJTT05BTCIsImV4cCI6MTU1NTY4ODg0NCwidG9rZW5UeXBlIjoibWVtYmVyVXNlciIsImp0aSI6IjA0ZjMzZjYwLWJjNmItNGY4NC1iYTcxLWEyNmQ0YzdmZmEwMCIsIm1lbWJlcklkIjo1MTQ1M30.jCF2fYtDlJrMZXB4ntGhzoguubjbDWE2hjgCe4E52nc"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/subscription/products/00af2c05-d8bf-4f4d-b8cb-56e1e898194d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"subscription",
+										"products",
+										"00af2c05-d8bf-4f4d-b8cb-56e1e898194d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create product via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "08659ec9-76b4-4f90-9aa9-2b6eb3639af8",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authorization}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"productForCaner2\",\n\t\"description\": \"description\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "list products via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "d3b02fc9-0430-4a93-bb24-610ad4869b48",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retrieve product via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "d5a13cc3-b704-4189-96af-2f0ab52bc9e7",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products/ff896828-a12c-43eb-a956-9970ce03edf1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products",
+										"ff896828-a12c-43eb-a956-9970ce03edf1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete product via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "c9db1d3c-f051-4775-a8e3-4111b5cdd381",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products/aa887d31-2a73-496f-a309-a0a9e6cfe6d2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products",
+										"aa887d31-2a73-496f-a309-a0a9e6cfe6d2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update product via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "04bfc602-bc8c-4d82-8501-08f4f5fa4fd6",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"TestUpdateProduct1123\",\n\t\"description\": \"test\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products/00af2c05-d8bf-4f4d-b8cb-56e1e898194d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products",
+										"00af2c05-d8bf-4f4d-b8cb-56e1e898194d"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "pricing-plan",
+					"item": [
+						{
+							"name": "delete pricing plan via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "e080f6f1-5d51-47c9-b0bb-b5a764b34a7b",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/pricing-plans/50f93200-9ae7-4f07-8f38-d32f6784923d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"pricing-plans",
+										"50f93200-9ae7-4f07-8f38-d32f6784923d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "list pricing plans via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "268ad7bc-bf6b-4345-95f8-d6c91be7176c",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products/44cb4a6e-75fb-43cb-baf3-05140b812536/pricing-plans/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products",
+										"44cb4a6e-75fb-43cb-baf3-05140b812536",
+										"pricing-plans",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create pricing plan via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "5e4ebef0-eb51-4d16-86ff-3cbfebab0d96",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Aylik 10 TL v2\",\n\t\"price\": 102,\n\t\"currencyCode\": \"TRY\",\n\t\"paymentInterval\": \"MONTHLY\",\n\t\"paymentIntervalCount\": 1,\n\t\"trialPeriodDays\": 0,\n\t\"recurrenceCount\": 12,\n\t\"planPaymentType\": \"RECURRING\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products/44cb4a6e-75fb-43cb-baf3-05140b812536/pricing-plans",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products",
+										"44cb4a6e-75fb-43cb-baf3-05140b812536",
+										"pricing-plans"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update pricing plan",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "4025f071-1ecc-4a56-9dd3-b27b9b1cd479",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic3Vic2NyaXB0aW9uIiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsInN1YnNjcmlwdGlvbl9lZGl0IiwiYXBwbGljYXRpb24iLCJmdW5kIiwidmFsaWRhdGlvbl9lcnJvcl9lZGl0IiwicmVmdW5kc19lZGl0IiwiZGFzaGJvYXJkX2VkaXQiLCJpbnZvaWNlIiwiYXNhbl9wYXJkYWtodCIsInNldHRsZW1lbnRfdXBkYXRlZCIsInVzZXJNYW5hZ2VtZW50X2VkaXQiXSwiY2xpZW50X2lkIjoibWVtYmVyQXBpIiwicGhvbmVOdW1iZXIiOiIrOTA1Mzg1NDk5MTYwIiwibWVyY2hhbnRJZCI6MzQ1MDM2LCJzY29wZSI6WyJtZW1iZXJBcGkiXSwibWFzdGVyVXNlciI6dHJ1ZSwibWVtYmVyVHlwZSI6IlBFUlNPTkFMIiwiZXhwIjoxNTU2MTk5MzcyLCJ0b2tlblR5cGUiOiJtZW1iZXJVc2VyIiwianRpIjoiOWE0ZWE5MzEtNTJkYi00M2Q1LWFjYmQtZTg5MzBlODc2ODk1IiwibWVtYmVySWQiOjUxNDUzfQ.HwGir2y9va8jl_mGUvCP3GPCyBk3ScOOyrSdnbuRy5Q"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"xx\",\n\t\"trialPeriodDays\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/products/52e05b7e-f30f-4020-91a2-e423d69f5e15/pricing-plans/12105def-06f8-451a-98b7-ec9e656303d4",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products",
+										"52e05b7e-f30f-4020-91a2-e423d69f5e15",
+										"pricing-plans",
+										"12105def-06f8-451a-98b7-ec9e656303d4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retrieve pricing plan via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "ededb3ea-6f68-4e61-b4c4-9d3351099308",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/pricing-plans/8f3353b7-176e-4244-8993-2faad4504871",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"pricing-plans",
+										"8f3353b7-176e-4244-8993-2faad4504871"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update pricing plan via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "051c2a34-ace3-4570-8401-2838d4459e77",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"test1ss1111\",\n\t\"trialPeriodDays\": 10\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/pricing-plans/50f93200-9ae7-4f07-8f38-d32f6784923d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"pricing-plans",
+										"50f93200-9ae7-4f07-8f38-d32f6784923d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retrieve pricing plan",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "debfda49-8b79-4410-b1e9-4bd4ff510ab8",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsImFwcGxpY2F0aW9uIiwiZnVuZCIsInZhbGlkYXRpb25fZXJyb3JfZWRpdCIsInJlZnVuZHNfZWRpdCIsImRhc2hib2FyZF9lZGl0IiwiaW52b2ljZSIsImFzYW5fcGFyZGFraHQiLCJzZXR0bGVtZW50X3VwZGF0ZWQiLCJ1c2VyTWFuYWdlbWVudF9lZGl0Il0sImNsaWVudF9pZCI6Im1lbWJlckFwaSIsInBob25lTnVtYmVyIjoiKzkwNTM4NTQ5OTE2MCIsIm1lcmNoYW50SWQiOjM0NTAzNiwic2NvcGUiOlsibWVtYmVyQXBpIl0sIm1hc3RlclVzZXIiOnRydWUsIm1lbWJlclR5cGUiOiJQRVJTT05BTCIsImV4cCI6MTU1NTY4ODg0NCwidG9rZW5UeXBlIjoibWVtYmVyVXNlciIsImp0aSI6IjA0ZjMzZjYwLWJjNmItNGY4NC1iYTcxLWEyNmQ0YzdmZmEwMCIsIm1lbWJlcklkIjo1MTQ1M30.jCF2fYtDlJrMZXB4ntGhzoguubjbDWE2hjgCe4E52nc"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/subscription/pricing-plans/00af2c05-d8bf-4f4d-b8cb-56e1e898194d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"subscription",
+										"pricing-plans",
+										"00af2c05-d8bf-4f4d-b8cb-56e1e898194d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create pricing plan",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "02fe5614-9d7f-472b-9604-1db4007fe4b3",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"test1ss\",\n\t\"amount\": 200,\n    \"price\": 12,\n\t\"currencyCode\": \"TRY\",\n\t\"paymentInterval\": \"DAILY\",\n\t\"paymentIntervalCount\": 10,\n\t\"planPaymentType\": \"RECURRING\"\n}"
+								},
+								"url": {
+									"raw": "https://sandbox-api.iyzipay.com/v2/subscription/products/{product_reference}/pricing-plans",
+									"protocol": "https",
+									"host": [
+										"sandbox-api",
+										"iyzipay",
+										"com"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"products",
+										"{product_reference}",
+										"pricing-plans"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "subscription",
+					"item": [
+						{
+							"name": "init",
+							"item": [
+								{
+									"name": "checkoutform",
+									"item": [
+										{
+											"name": "init",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "a1d2e6ff-7d9d-4e6b-a9e2-db5806ef09e0",
+														"exec": [
+															"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+															"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+															"",
+															" ",
+															"//generate authorization string",
+															"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+															"  var startIndex = requestUrl.indexOf(\"/v2\");",
+															"  var endIndex = requestUrl.indexOf(\"?\");",
+															"  var uri_path;",
+															"  if (endIndex === -1){",
+															"    uri_path = requestUrl.substring(startIndex);",
+															"  } else {",
+															"    uri_path = requestUrl.substring(startIndex, endIndex);",
+															"  }",
+															"  ",
+															"  var payload;",
+															"  if (_.isEmpty(requestData)){",
+															"    payload = uri_path;",
+															"  } else {",
+															"    payload = uri_path + requestData; ",
+															"  }",
+															" ",
+															"  var dataToEncrypt = randomKey + payload;",
+															"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+															"  ",
+															"  var authorizationString = \"apiKey:\" + apiKey",
+															"            +\"&randomKey:\" + randomKey",
+															"            +\"&signature:\" + encryptedData;",
+															"    ",
+															"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+															"  ",
+															"  console.log(\"apiKey\", apiKey);",
+															"  console.log(\"secretKey\", secretKey);",
+															"  console.log(\"requestUrl\", requestUrl);",
+															"  console.log(\"requestData\", requestData);",
+															"  console.log(\"randomKey\", randomKey);",
+															"  console.log(\"uri_path\", uri_path);",
+															"  console.log(\"payload\", payload);",
+															"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+															"  console.log(\"encryptedData\", encryptedData);",
+															"  console.log(\"authorizationString\", authorizationString);",
+															"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+															"  ",
+															"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+															"}",
+															" ",
+															"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+															"postman.setGlobalVariable(\"authorization\", authorization);"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"type": "text",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"type": "text",
+														"value": "{{authorization}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n\t\"callbackUrl\": \"http://www.merchant.com/callback\",\n\t\"pricingPlanReferenceCode\": \"YOUR_PRICING_PLAN_REFERENCE_CODE\",\n\t\"subscriptionInitialStatus\": \"ACTIVE\",\n\t\"customer\": {\n\t\t\"name\": \"Test\",\n\t\t\"surname\": \"Dude\",\n\t\t\"email\": \"test.test123@mail.com\",\n\t\t\"gsmNumber\": \"+905385499199\",\n\t\t\"identityNumber\": 11111113333,\n\t\t\"billingAddress\": {\n\t\t\t\"address\": \"address\",\n\t\t\t\"zipCode\": \"zipCode\",\n\t\t\t\"contactName\": \"contactName\",\n\t\t\t\"city\": \"city\",\n\t\t\t\"country\": \"country\"\n\t\t}\n\t}\n}"
+												},
+												"url": {
+													"raw": "https://sandbox-api.iyzipay.com/v2/subscription/checkoutform/initialize",
+													"protocol": "https",
+													"host": [
+														"sandbox-api",
+														"iyzipay",
+														"com"
+													],
+													"path": [
+														"v2",
+														"subscription",
+														"checkoutform",
+														"initialize"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "retrieve subscription after completed checkoutform",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "ee169628-7e67-43eb-8519-25ae6571cbc5",
+														"exec": [
+															"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+															"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+															" ",
+															"//generate authorization string",
+															"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+															"  var startIndex = requestUrl.indexOf(\"/v2\");",
+															"  var endIndex = requestUrl.indexOf(\"?\");",
+															"  var uri_path;",
+															"  if (endIndex === -1){",
+															"    uri_path = requestUrl.substring(startIndex);",
+															"  } else {",
+															"    uri_path = requestUrl.substring(startIndex, endIndex);",
+															"  }",
+															"  ",
+															"  var payload;",
+															"  if (_.isEmpty(requestData)){",
+															"    payload = uri_path;",
+															"  } else {",
+															"    payload = uri_path + requestData; ",
+															"  }",
+															" ",
+															"  var dataToEncrypt = randomKey + payload;",
+															"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+															"  ",
+															"  var authorizationString = \"apiKey:\" + apiKey",
+															"            +\"&randomKey:\" + randomKey",
+															"            +\"&signature:\" + encryptedData;",
+															"    ",
+															"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+															"  ",
+															"  console.log(\"apiKey\", apiKey);",
+															"  console.log(\"secretKey\", secretKey);",
+															"  console.log(\"requestUrl\", requestUrl);",
+															"  console.log(\"requestData\", requestData);",
+															"  console.log(\"randomKey\", randomKey);",
+															"  console.log(\"uri_path\", uri_path);",
+															"  console.log(\"payload\", payload);",
+															"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+															"  console.log(\"encryptedData\", encryptedData);",
+															"  console.log(\"authorizationString\", authorizationString);",
+															"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+															"  ",
+															"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+															"}",
+															" ",
+															"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+															"postman.setGlobalVariable(\"authorization\", authorization);"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"protocolProfileBehavior": {
+												"disableBodyPruning": true
+											},
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"type": "text",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"type": "text",
+														"value": "{{authorization}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v2/subscription/checkoutform/43c5938b-4fc0-49b0-a4e2-cc0a5b3885a9",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v2",
+														"subscription",
+														"checkoutform",
+														"43c5938b-4fc0-49b0-a4e2-cc0a5b3885a9"
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "init with api",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "b9a62881-e143-41e1-a9e9-a1e6c0cc5cc8",
+												"exec": [
+													"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+													"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+													" ",
+													"//generate authorization string",
+													"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+													"  var startIndex = requestUrl.indexOf(\"/v2\");",
+													"  var endIndex = requestUrl.indexOf(\"?\");",
+													"  var uri_path;",
+													"  if (endIndex === -1){",
+													"    uri_path = requestUrl.substring(startIndex);",
+													"  } else {",
+													"    uri_path = requestUrl.substring(startIndex, endIndex);",
+													"  }",
+													"  ",
+													"  var payload;",
+													"  if (_.isEmpty(requestData)){",
+													"    payload = uri_path;",
+													"  } else {",
+													"    payload = uri_path + requestData; ",
+													"  }",
+													" ",
+													"  var dataToEncrypt = randomKey + payload;",
+													"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+													"  ",
+													"  var authorizationString = \"apiKey:\" + apiKey",
+													"            +\"&randomKey:\" + randomKey",
+													"            +\"&signature:\" + encryptedData;",
+													"    ",
+													"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+													"  ",
+													"  console.log(\"apiKey\", apiKey);",
+													"  console.log(\"secretKey\", secretKey);",
+													"  console.log(\"requestUrl\", requestUrl);",
+													"  console.log(\"requestData\", requestData);",
+													"  console.log(\"randomKey\", randomKey);",
+													"  console.log(\"uri_path\", uri_path);",
+													"  console.log(\"payload\", payload);",
+													"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+													"  console.log(\"encryptedData\", encryptedData);",
+													"  console.log(\"authorizationString\", authorizationString);",
+													"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+													"  ",
+													"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+													"}",
+													" ",
+													"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+													"postman.setGlobalVariable(\"authorization\", authorization);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "{{authorization}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"subscriptionInitialStatus\": \"ACTIVE\",\n\t\"pricingPlanReferenceCode\": \"63b70d20-e375-4471-a3e4-c084c4073068\",\n\t\"paymentCard\": {\n\t\t\"cardHolderName\": \"John Doe\",\n\t\t\"cardNumber\": \"5526080000000006\",\n\t\t\"expireYear\": \"24\",\n\t\t\"expireMonth\": \"12\",\n\t\t\"cvc\": \"999\"\n\t},\n\t\"customer\": {\n\t\t\"name\": \"erhan\",\n\t\t\"surname\": \"mutlu\",\n\t\t\"email\": \"testErhanxxa@mail.com\",\n\t\t\"gsmNumber\": \"+905385499199\",\n\t\t\"identityNumber\": 11111113333,\n\t\t\"billingAddress\": {\n\t\t\t\"address\": \"address\",\n\t\t\t\"zipCode\": \"zipCode\",\n\t\t\t\"contactName\": \"contactName\",\n\t\t\t\"city\": \"city\",\n\t\t\t\"country\": \"country\"\n\t\t},\n\t\t\"shippingAddress\": {\n\t\t\t\"address\": \"address\",\n\t\t\t\"zipCode\": \"zipCode\",\n\t\t\t\"contactName\": \"contactName\",\n\t\t\t\"city\": \"city\",\n\t\t\t\"country\": \"country\"\n\t\t}\n\t}\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/subscription/initialize",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"subscription",
+												"initialize"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "init for existing customer with api",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "ac6b1b49-09b9-452c-b462-c0054c570c5c",
+												"exec": [
+													"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+													"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+													" ",
+													"//generate authorization string",
+													"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+													"  var startIndex = requestUrl.indexOf(\"/v2\");",
+													"  var endIndex = requestUrl.indexOf(\"?\");",
+													"  var uri_path;",
+													"  if (endIndex === -1){",
+													"    uri_path = requestUrl.substring(startIndex);",
+													"  } else {",
+													"    uri_path = requestUrl.substring(startIndex, endIndex);",
+													"  }",
+													"  ",
+													"  var payload;",
+													"  if (_.isEmpty(requestData)){",
+													"    payload = uri_path;",
+													"  } else {",
+													"    payload = uri_path + requestData; ",
+													"  }",
+													" ",
+													"  var dataToEncrypt = randomKey + payload;",
+													"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+													"  ",
+													"  var authorizationString = \"apiKey:\" + apiKey",
+													"            +\"&randomKey:\" + randomKey",
+													"            +\"&signature:\" + encryptedData;",
+													"    ",
+													"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+													"  ",
+													"  console.log(\"apiKey\", apiKey);",
+													"  console.log(\"secretKey\", secretKey);",
+													"  console.log(\"requestUrl\", requestUrl);",
+													"  console.log(\"requestData\", requestData);",
+													"  console.log(\"randomKey\", randomKey);",
+													"  console.log(\"uri_path\", uri_path);",
+													"  console.log(\"payload\", payload);",
+													"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+													"  console.log(\"encryptedData\", encryptedData);",
+													"  console.log(\"authorizationString\", authorizationString);",
+													"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+													"  ",
+													"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+													"}",
+													" ",
+													"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+													"postman.setGlobalVariable(\"authorization\", authorization);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "{{authorization}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"subscriptionInitialStatus\": \"ACTIVE\",\n\t\"pricingPlanReferenceCode\": \"b6d4bdae-c483-4959-9edd-f37232122d91\",\n\t\"customerReferenceCode\": \"60940d42-74cd-4334-b2b4-ca8e69baf91a\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/subscription/initialize/with-customer",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"subscription",
+												"initialize",
+												"with-customer"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "retrieve subscription via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "12750558-ca3b-409a-bbe6-67fc47d5872e",
+										"exec": [
+											"var apiKey = \"sandbox-t1lWRrN28GGhrKzAPOVwCJcU1LMafLab\";",
+											"var secretKey = \"sandbox-yi3WsZlLT2gXwlBZ4mHNlq8zgOJ1McpG\";",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\n\t\"SubscriptionReferenceCode\":\"2974099d-b39e-4a4a-b759-8c42da44917a\"\n}\n"
+								},
+								"url": {
+									"raw": "https://sandbox-api.iyzipay.com/v2/subscription/subscriptions/2974099d-b39e-4a4a-b759-8c42da44917a",
+									"protocol": "https",
+									"host": [
+										"sandbox-api",
+										"iyzipay",
+										"com"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"subscriptions",
+										"2974099d-b39e-4a4a-b759-8c42da44917a"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "list subscriptions",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "81db42bb-e1a5-4412-ad97-29f88b86535d",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJVc2VySWQiOjk4MjgsImVtYWlsQ29uZmlybWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJlcmhtdXRsdS5hZHMrMjBAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsic3Vic2NyaXB0aW9ucyIsImZyYXVkX3JlcG9ydCIsImNvbm5lY3RfcG9zX2xpc3QiLCJkaXNwdXRlX2VkaXQiLCJ0cmFuc2FjdGlvbl9yZXBvcnQiLCJ1c2VyTWFuYWdlbWVudF9saXN0IiwidXNlck1hbmFnZW1lbnRfY3JlYXRlIiwicHJvZmlsZV9lZGl0IiwiaXl6aWxpbmsiLCJjb25uZWN0X3Bvc19yb3V0aW5nX2VkaXQiLCJpbnZvaWNlX2VkaXQiLCJzaGlwcGluZyIsInVzZXJNYW5hZ2VtZW50X2NyZWF0ZV9lZGl0IiwicGF5bWVudF9tYXAiLCJwYXltZW50X21hcF9lZGl0IiwidHJhbnNhY3Rpb25fcmVwb3J0X2VkaXQiLCJhcHBsaWNhdGlvbl9lZGl0IiwiZGFzaGJvYXJkIiwic2V0dGluZ3MiLCJzZXR0bGVtZW50X2N1dG9mZl9lZGl0IiwicHJvZmlsZSIsInNoaXBwaW5nX2VkaXQiLCJ0cmFuc2FjdGlvbnMiLCJvdmVyYWxsX2JhbGFuY2VfZWRpdCIsInNldHRsZW1lbnRfYXBwcm92ZWRfbWVyY2hhbnRfZWRpdCIsInRvb2xzX2VkaXQiLCJzZXR0bGVtZW50X2N1dG9mZiIsInVzZXJNYW5hZ2VtZW50X2xpc3RfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnMiLCJjb25uZWN0X3Bvc19yb3V0aW5nIiwiZnJhdWRfcmV2aWV3X3N0YXRlIiwidHJhbnNhY3Rpb25zX2VkaXQiLCJidXllcl9wcm90ZWN0aW9uX2VkaXQiLCJ1c2VyTWFuYWdlbWVudCIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnQiLCJzZXR0bGVtZW50X2JvdW5jZWQiLCJ2YWxpZGF0aW9uX2Vycm9yIiwic2V0dGxlbWVudF9lZGl0IiwiaXl6aWxpbmtfZWRpdCIsInNldHRsZW1lbnRfdXBkYXRlZF9lZGl0Iiwic2V0dGxlbWVudF9hcHByb3ZlZF9tZXJjaGFudCIsInRvb2xzIiwicmVmdW5kcyIsInNldHRsZW1lbnQiLCJzZXR0aW5nc19lZGl0IiwiYnV5ZXJfcHJvdGVjdGlvbiIsImRpc3B1dGUiLCJmcmF1ZF9yZXZpZXdfc3RhdGVfZWRpdCIsInNldHRsZW1lbnRfYm91bmNlZF9lZGl0IiwiZmlsdGVyX3RyYW5zYWN0aW9uc193aXRob3V0X2Jhc2tldF9pZCIsImZ1bmRfZWRpdCIsImluc3RhbGxtZW50Q29tbWlzc2lvbnNfZWRpdCIsInJlY29uY2lsaWF0aW9uX2VkaXQiLCJyZWNvbmNpbGlhdGlvbiIsIm92ZXJhbGxfYmFsYW5jZSIsImNvbm5lY3RfcG9zX21hbmFnZW1lbnRfZWRpdCIsImNvbm5lY3RfcG9zX2xpc3RfZWRpdCIsImFwcGxpY2F0aW9uIiwiZnVuZCIsInZhbGlkYXRpb25fZXJyb3JfZWRpdCIsInJlZnVuZHNfZWRpdCIsImRhc2hib2FyZF9lZGl0IiwiaW52b2ljZSIsImFzYW5fcGFyZGFraHQiLCJzZXR0bGVtZW50X3VwZGF0ZWQiLCJ1c2VyTWFuYWdlbWVudF9lZGl0Il0sImNsaWVudF9pZCI6Im1lbWJlckFwaSIsInBob25lTnVtYmVyIjoiKzkwNTM4NTQ5OTE2MCIsIm1lcmNoYW50SWQiOjM0NTAzNiwic2NvcGUiOlsibWVtYmVyQXBpIl0sIm1hc3RlclVzZXIiOnRydWUsIm1lbWJlclR5cGUiOiJQRVJTT05BTCIsImV4cCI6MTU1NTY4ODg0NCwidG9rZW5UeXBlIjoibWVtYmVyVXNlciIsImp0aSI6IjA0ZjMzZjYwLWJjNmItNGY4NC1iYTcxLWEyNmQ0YzdmZmEwMCIsIm1lbWJlcklkIjo1MTQ1M30.jCF2fYtDlJrMZXB4ntGhzoguubjbDWE2hjgCe4E52nc"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/subscription/subscriptions?subscriptionStatus=PENDING&page=1&count=4",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"subscription",
+										"subscriptions"
+									],
+									"query": [
+										{
+											"key": "subscriptionStatus",
+											"value": "PENDING"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "list subscriptions via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "87e6f108-32ea-41cb-939b-fd97092cbe0e",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											"",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/subscriptions?subscriptionReferenceCode=1d13523f-24a5-4151-bb78-2cfddcd52e25&page=1&count=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"subscriptions"
+									],
+									"query": [
+										{
+											"key": "subscriptionReferenceCode",
+											"value": "1d13523f-24a5-4151-bb78-2cfddcd52e25"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "subscription-order",
+					"item": [
+						{
+							"name": "retrieve order via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a1c055b4-034c-4eea-9db5-ecd026efef86",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/orders/be184646-eac2-43da-9769-7b2b8b9e04ca",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"orders",
+										"be184646-eac2-43da-9769-7b2b8b9e04ca"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "operation",
+					"item": [
+						{
+							"name": "upgrade subscription via api gateway Copy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "af641094-94bc-477f-816f-c28fc2dedf97",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"newPricingPlanReferenceCode\": \"8d0c2072-4182-4ed9-86f4-ee00d6ac6150\",\n\t\"upgradePeriod\": \"NEXT_PERIOD\",\n\t\"useTrial\": false,\n\t\"resetRecurrenceCount\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/subscriptions/97fb885d-69e3-49ac-8590-9d05c9c6016e/upgrade",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"subscriptions",
+										"97fb885d-69e3-49ac-8590-9d05c9c6016e",
+										"upgrade"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "activate subscription via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7201e07c-fd94-42b7-974d-0c87ba9744e6",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"referenceCode\": \"befec349-836c-4c41-a6bd-452cc0b4bc40\",\n\t\"newPricingPlanReferenceCode\": \"0377e55e-4739-489b-a6a9-130d869b6b9c\",\n\t\"upgradePeriod\": \"NEXT_PERIOD\",\n\t\"useTrial\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/subscriptions/db6c96bb-dd76-4c12-8064-c1d8325acc29/activate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"subscriptions",
+										"db6c96bb-dd76-4c12-8064-c1d8325acc29",
+										"activate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "cancel subscription via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6c510619-ef9e-4afe-a2ec-c465b39ce2ea",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/subscriptions/e5dd9172-5b59-4be1-a03a-c2ef94269e0f/cancel",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"subscriptions",
+										"e5dd9172-5b59-4be1-a03a-c2ef94269e0f",
+										"cancel"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retry subscription via api gateway",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "371809e7-c088-4833-9568-4d2eba584eac",
+										"exec": [
+											"var apiKey = postman.getEnvironmentVariable(\"apiKey\");",
+											"var secretKey = postman.getEnvironmentVariable(\"secretKey\");",
+											" ",
+											"//generate authorization string",
+											"function generateAuthorizationString(requestUrl, requestData, randomKey) {",
+											"  var startIndex = requestUrl.indexOf(\"/v2\");",
+											"  var endIndex = requestUrl.indexOf(\"?\");",
+											"  var uri_path;",
+											"  if (endIndex === -1){",
+											"    uri_path = requestUrl.substring(startIndex);",
+											"  } else {",
+											"    uri_path = requestUrl.substring(startIndex, endIndex);",
+											"  }",
+											"  ",
+											"  var payload;",
+											"  if (_.isEmpty(requestData)){",
+											"    payload = uri_path;",
+											"  } else {",
+											"    payload = uri_path + requestData; ",
+											"  }",
+											" ",
+											"  var dataToEncrypt = randomKey + payload;",
+											"  var encryptedData = CryptoJS.HmacSHA256(dataToEncrypt, secretKey);",
+											"  ",
+											"  var authorizationString = \"apiKey:\" + apiKey",
+											"            +\"&randomKey:\" + randomKey",
+											"            +\"&signature:\" + encryptedData;",
+											"    ",
+											"  var base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));",
+											"  ",
+											"  console.log(\"apiKey\", apiKey);",
+											"  console.log(\"secretKey\", secretKey);",
+											"  console.log(\"requestUrl\", requestUrl);",
+											"  console.log(\"requestData\", requestData);",
+											"  console.log(\"randomKey\", randomKey);",
+											"  console.log(\"uri_path\", uri_path);",
+											"  console.log(\"payload\", payload);",
+											"  console.log(\"dataToEncrypt\", dataToEncrypt);",
+											"  console.log(\"encryptedData\", encryptedData);",
+											"  console.log(\"authorizationString\", authorizationString);",
+											"  console.log(\"authorization\", \"IYZWSv2 \" + base64EncodedAuthorization);",
+											"  ",
+											"  return \"IYZWSv2 \" + base64EncodedAuthorization;",
+											"}",
+											" ",
+											"var authorization = generateAuthorizationString(request.url, request.data, \"random-key-123\");",
+											"postman.setGlobalVariable(\"authorization\", authorization);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{authorization}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"referenceCode\": \"a2077643-bab7-4b73-85a5-7676c78d7c66\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/subscription/operation/retry",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"subscription",
+										"operation",
+										"retry"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "trigger recurring",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "1",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJhZG1pbiJdLCJqdGkiOiI3ZjIzNjNmYS05MjUwLTRhZWYtYWZmNy1hMmJjYWY5OWRhMzEiLCJjbGllbnRfaWQiOiJzdWJzY3JpcHRpb25BcGkifQ.DuC844eBlylbnZDk4-eaYMl_l_eClWPu-7_WEYCE1Rs",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJhZG1pbiJdLCJleHAiOjE1OTY0MTU5NTEsImp0aSI6IjdmMjM2M2ZhLTkyNTAtNGFlZi1hZmY3LWEyYmNhZjk5ZGEzMSIsImNsaWVudF9pZCI6InN1YnNjcmlwdGlvbkFwaSJ9.so99SANO0AL4xKj9_bw6M5Sn28N9H_r2kcyGWaWWimY",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/internal/subscription/recurring",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"internal",
+								"subscription",
+								"recurring"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
